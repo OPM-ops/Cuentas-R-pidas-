@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Sistema de Gestión de Compras - Proveedores</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+        }
+
+        .btn-danger:hover {
+            background: #c53030;
+        }
+
+        .btn-warning {
+            background: #ed8936;
+        }
+
+        .btn-warning:hover {
+            background: #dd6b20;
+        }
+
+        .btn-success {
+            background: #48bb78;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+        }
+
+        .productos-list {
+            margin-top: 20px;
+        }
+
+        .producto-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            transition: box-shadow 0.2s;
+        }
+
+        .producto-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .producto-info {
+            flex: 1;
+        }
+
+        .producto-nombre {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .producto-cantidad {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .producto-detalle {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+            line-height: 1.5;
+        }
+
+        .producto-precios {
+            text-align: right;
+            min-width: 220px;
+        }
+
+        .precio-unitario {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .precio-venta {
+            color: #48bb78;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .total-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .total-detalle {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .total-final {
+            font-size: 1.5em;
+            font-weight: bold;
+            border-top: 2px solid rgba(255,255,255,0.3);
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+
+        .acciones-rápidas {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .badge-iva {
+            display: inline-block;
+            background: #fbbf24;
+            color: #333;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .producto-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .producto-precios {
+                text-align: left;
+                width: 100%;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .acciones-rápidas button {
+                width: auto;
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Sistema de Gestión de Compras</h1>
+        <div class="subtitle">Control de proveedores, cantidades y cálculo de precios</div>
+
+        <div class="form-section">
+            <h2>➕ Agregar Producto</h2>
+            <div class="row">
+                <div class="form-group">
+                    <label>Nombre del producto</label>
+                    <input type="text" id="productoNombre" placeholder="Ej: Juego de Mesa" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Cantidad</label>
+                    <input type="number" id="productoCantidad" placeholder="1" value="1" min="1" step="1">
+                </div>
+                <div class="form-group">
+                    <label>Precio unitario ($)</label>
+                    <input type="text" id="productoPrecio" placeholder="Ej: 100.000" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Proveedor</label>
+                    <select id="productoProveedor">
+                        <option value="CD">CD Distribution</option>
+                        <option value="Devir">Devir</option>
+                        <option value="Otro">Otro Proveedor</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" id="devirOpcion" style="display: none;">
+                <label>Tipo de compra Devir</label>
+                <select id="devirTipo">
+                    <option value="normal">Compra normal (sin IVA)</option>
+                    <option value="preventa">Preventa (con IVA 19%)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Forma de pago (solo CD Distribution)</label>
+                <select id="formaPago">
+                    <option value="efectivo">Efectivo (2% descuento)</option>
+                    <option value="otros">Otros medios (sin descuento)</option>
+                </select>
+            </div>
+            <button onclick="agregarProducto()">➕ Agregar Producto(s)</button>
+        </div>
+
+        <div class="productos-list" id="productosList">
+            <h2>📋 Productos agregados</h2>
+            <div id="listaProductos"></div>
+        </div>
+
+        <div class="total-section" id="totalSection">
+            <h3>💰 Resumen de Compra</h3>
+            <div id="totales"></div>
+            <div class="acciones-rápidas">
+                <button onclick="limpiarTodo()" class="btn-warning">🗑️ Limpiar todo</button>
+                <button onclick="exportarResumen()" class="btn-success">📄 Exportar resumen</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let productos = [];
+
+        // Función para formatear moneda en pesos colombianos
+        function formatearMoneda(valor) {
+            return new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(valor);
+        }
+
+        // Función para limpiar formato de moneda al escribir
+        function limpiarFormatoMoneda(valor) {
+            return valor.replace(/[^0-9]/g, '');
+        }
+
+        // Formatear el campo de precio mientras se escribe
+        document.getElementById('productoPrecio').addEventListener('input', function(e) {
+            let valor = this.value;
+            valor = limpiarFormatoMoneda(valor);
+            if (valor) {
+                valor = parseInt(valor);
+                this.value = formatearMoneda(valor).replace('COP', '').trim();
+            } else {
+                this.value = '';
+            }
+        });
+
+        // Mostrar/ocultar opción de Devir según proveedor seleccionado
+        document.getElementById('productoProveedor').addEventListener('change', function() {
+            const devirOpcion = document.getElementById('devirOpcion');
+            if (this.value === 'Devir') {
+                devirOpcion.style.display = 'block';
+            } else {
+                devirOpcion.style.display = 'none';
+            }
+        });
+
+        function agregarProducto() {
+            const nombre = document.getElementById('productoNombre').value.trim();
+            const cantidad = parseInt(document.getElementById('productoCantidad').value);
+            let precioUnitarioTexto = document.getElementById('productoPrecio').value;
+            
+            // Limpiar el precio para obtener el valor numérico
+            precioUnitarioTexto = limpiarFormatoMoneda(precioUnitarioTexto);
+            const precioUnitario = parseFloat(precioUnitarioTexto);
+            
+            const proveedor = document.getElementById('productoProveedor').value;
+            const formaPago = document.getElementById('formaPago').value;
+            
+            // Validaciones
+            if (!nombre) {
+                alert('Por favor ingresa el nombre del producto');
+                return;
+            }
+            if (isNaN(cantidad) || cantidad < 1) {
+                alert('Por favor ingresa una cantidad válida (mínimo 1)');
+                return;
+            }
+            if (isNaN(precioUnitario) || precioUnitario <= 0) {
+                alert('Por favor ingresa un precio unitario válido');
+                return;
+            }
+
+            // Calcular precio total de la compra (cantidad * precio unitario)
+            const precioCompraTotal = cantidad * precioUnitario;
+            
+            let ivaAplicado = false;
+            let porcentajeIva = 0;
+            let descuento = 0;
+            let precioConIva = precioCompraTotal;
+            let precioFinal = precioCompraTotal;
+
+            // Lógica de IVA y descuentos según proveedor
+            if (proveedor === 'CD') {
+                // CD Distribution: siempre cobra IVA 19%
+                ivaAplicado = true;
+                porcentajeIva = 19;
+                precioConIva = precioCompraTotal * 1.19;
+                precioFinal = precioConIva;
+                
+                // Descuento por pago en efectivo (2% sobre el total con IVA)
+                if (formaPago === 'efectivo') {
+                    descuento = precioConIva * 0.02;
+                    precioFinal = precioConIva - descuento;
+                }
+            } 
+            else if (proveedor === 'Devir') {
+                const tipoDevir = document.getElementById('devirTipo').value;
+                if (tipoDevir === 'preventa') {
+                    // Preventa: aplica IVA 19%
+                    ivaAplicado = true;
+                    porcentajeIva = 19;
+                    precioConIva = precioCompraTotal * 1.19;
+                    precioFinal = precioConIva;
+                } else {
+                    // Compra normal: sin IVA
+                    ivaAplicado = false;
+                    precioConIva = precioCompraTotal;
+                    precioFinal = precioCompraTotal;
+                }
+            }
+            else {
+                // Otros proveedores: sin IVA
+                ivaAplicado = false;
+                precioConIva = precioCompraTotal;
+                precioFinal = precioCompraTotal;
+            }
+
+            // Precio de venta total recomendado (+30% sobre el precio final pagado)
+            const precioVentaTotal = precioFinal * 1.30;
+            // Precio de venta unitario recomendado
+            const precioVentaUnitario = precioVentaTotal / cantidad;
+
+            // Guardar producto
+            const producto = {
+                id: Date.now(),
+                nombre: nombre,
+                cantidad: cantidad,
+                precioUnitario: precioUnitario,
+                precioCompraTotal: precioCompraTotal,
+                proveedor: proveedor,
+                precioConIva: precioConIva,
+                descuento: descuento,
+                precioFinal: precioFinal,
+                precioVentaTotal: precioVentaTotal,
+                precioVentaUnitario: precioVentaUnitario,
+                ivaAplicado: ivaAplicado,
+                porcentajeIva: porcentajeIva,
+                formaPago: formaPago
+            };
+
+            productos.push(producto);
+            actualizarLista();
+            limpiarFormulario();
+        }
+
+        function eliminarProducto(id) {
+            productos = productos.filter(p => p.id !== id);
+            actualizarLista();
+        }
+
+        function limpiarTodo() {
+            if (confirm('¿Estás seguro de eliminar todos los productos?')) {
+                productos = [];
+                actualizarLista();
+            }
+        }
+
+        function exportarResumen() {
+            if (productos.length === 0) {
+                alert('No hay productos para exportar');
+                return;
+            }
+
+            let resumen = "=== RESUMEN DE COMPRA ===\n\n";
+            resumen += `Fecha: ${new Date().toLocaleString()}\n\n`;
+            resumen += "PRODUCTOS:\n";
+            resumen += "=" .repeat(60) + "\n";
+            
+            productos.forEach((p, index) => {
+                resumen += `${index + 1}. ${p.nombre} (${p.cantidad} unidades)\n`;
+                resumen += `   Precio unitario: ${formatearMoneda(p.precioUnitario)}\n`;
+                resumen += `   Subtotal: ${formatearMoneda(p.precioCompraTotal)}\n`;
+                if (p.ivaAplicado) {
+                    resumen += `   IVA ${p.porcentajeIva}%: ${formatearMoneda(p.precioConIva - p.precioCompraTotal)}\n`;
+                }
+                if (p.descuento > 0) {
+                    resumen += `   Descuento: -${formatearMoneda(p.descuento)}\n`;
+                }
+                resumen += `   Total pagado: ${formatearMoneda(p.precioFinal)}\n`;
+                resumen += `   Precio venta sugerido (unitario): ${formatearMoneda(p.precioVentaUnitario)}\n`;
+                resumen += `   Precio venta sugerido (total): ${formatearMoneda(p.precioVentaTotal)}\n`;
+                resumen += "-".repeat(60) + "\n";
+            });
+            
+            const totalUnidades = productos.reduce((sum, p) => sum + p.cantidad, 0);
+            const totalCompra = productos.reduce((sum, p) => sum + p.precioCompraTotal, 0);
+            const totalIva = productos.reduce((sum, p) => sum + (p.precioConIva - p.precioCompraTotal), 0);
+            const totalDescuentos = productos.reduce((sum, p) => sum + p.descuento, 0);
+            const totalPagar = productos.reduce((sum, p) => sum + p.precioFinal, 0);
+            const gananciaTotal = productos.reduce((sum, p) => sum + (p.precioVentaTotal - p.precioFinal), 0);
+            
+            resumen += "\nRESUMEN TOTAL:\n";
+            resumen += `Total productos: ${productos.length} productos (${totalUnidades} unidades)\n`;
+            resumen += `Subtotal productos: ${formatearMoneda(totalCompra)}\n`;
+            resumen += `Total IVA aplicado: ${formatearMoneda(totalIva)}\n`;
+            resumen += `Total descuentos: ${formatearMoneda(totalDescuentos)}\n`;
+            resumen += `TOTAL A PAGAR: ${formatearMoneda(totalPagar)}\n`;
+            resumen += `Ganancia estimada total: ${formatearMoneda(gananciaTotal)}\n`;
+            resumen += `\n=== FIN DEL RESUMEN ===\n`;
+            
+            // Crear archivo para descargar
+            const blob = new Blob([resumen], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `resumen_compra_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function actualizarLista() {
+            const listaDiv = document.getElementById('listaProductos');
+            const totalesDiv = document.getElementById('totales');
+            
+            if (productos.length === 0) {
+                listaDiv.innerHTML = '<p style="text-align: center; color: #666;">No hay productos agregados</p>';
+                totalesDiv.innerHTML = '<div class="total-detalle">Total productos: 0</div><div class="total-final">Total a pagar: $0</div>';
+                return;
+            }
+
+            // Mostrar lista de productos
+            listaDiv.innerHTML = productos.map(p => {
+                let proveedorNombre = '';
+                switch(p.proveedor) {
+                    case 'CD': proveedorNombre = 'CD Distribution'; break;
+                    case 'Devir': proveedorNombre = 'Devir'; break;
+                    default: proveedorNombre = 'Otro Proveedor';
+                }
+                
+                let detallesIva = '';
+                if (p.ivaAplicado) {
+                    detallesIva = `<span class="badge-iva">IVA ${p.porcentajeIva}% aplicado</span>`;
+                } else {
+                    detallesIva = `<span class="badge-iva" style="background: #9ca3af;">Sin IVA</span>`;
+                }
+                
+                let descuentoTexto = '';
+                if (p.descuento > 0) {
+                    descuentoTexto = `<div>🎯 Descuento: -${formatearMoneda(p.descuento)}</div>`;
+                }
+                
+                return `
+                    <div class="producto-item">
+                        <div class="producto-info">
+                            <div class="producto-nombre">
+                                ${p.nombre}
+                                <span class="producto-cantidad">${p.cantidad} unidades</span>
+                                ${detallesIva}
+                            </div>
+                            <div class="producto-detalle">
+                                <div>🏢 Proveedor: ${proveedorNombre}</div>
+                                <div>💰 Precio unitario: ${formatearMoneda(p.precioUnitario)} | Subtotal: ${formatearMoneda(p.precioCompraTotal)}</div>
+                                ${descuentoTexto}
+                                <div><strong>💵 Total pagado: ${formatearMoneda(p.precioFinal)}</strong></div>
+                            </div>
+                        </div>
+                        <div class="producto-precios">
+                            <div class="precio-venta">💲 Precio venta sugerido:</div>
+                            <div class="precio-venta">Unitario: ${formatearMoneda(p.precioVentaUnitario)}</div>
+                            <div class="precio-venta">Total: ${formatearMoneda(p.precioVentaTotal)}</div>
+                            <small style="color: #48bb78;">(+30% sobre costo final)</small>
+                            <div style="margin-top: 8px;">
+                                <button class="btn-danger" onclick="eliminarProducto(${p.id})" style="padding: 5px 10px; font-size: 12px;">❌ Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Calcular totales
+            const totalUnidades = productos.reduce((sum, p) => sum + p.cantidad, 0);
+            const totalCompra = productos.reduce((sum, p) => sum + p.precioCompraTotal, 0);
+            const totalIva = productos.reduce((sum, p) => sum + (p.precioConIva - p.precioCompraTotal), 0);
+            const totalDescuentos = productos.reduce((sum, p) => sum + p.descuento, 0);
+            const totalPagar = productos.reduce((sum, p) => sum + p.precioFinal, 0);
+            const gananciaTotal = productos.reduce((sum, p) => sum + (p.precioVentaTotal - p.precioFinal), 0);
+            
+            totalesDiv.innerHTML = `
+                <div class="total-detalle">
+                    <span>📦 Total productos:</span>
+                    <span>${productos.length} productos (${totalUnidades} unidades)</span>
+                </div>
+                <div class="total-detalle">
+                    <span>💰 Subtotal productos:</span>
+                    <span>${formatearMoneda(totalCompra)}</span>
+                </div>
+                <div class="total-detalle">
+                    <span>🧾 Total IVA aplicado:</span>
+                    <span>${formatearMoneda(totalIva)}</span>
+                </div>
+                <div class="total-detalle">
+                    <span>🎯 Total descuentos:</span>
+                    <span>${formatearMoneda(totalDescuentos)}</span>
+                </div>
+                <div class="total-detalle total-final">
+                    <span>💵 TOTAL A PAGAR:</span>
+                    <span>${formatearMoneda(totalPagar)}</span>
+                </div>
+                <div class="total-detalle" style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px;">
+                    <span>📈 Ganancia estimada total:</span>
+                    <span>${formatearMoneda(gananciaTotal)}</span>
+                </div>
+            `;
+        }
+
+        function limpiarFormulario() {
+            document.getElementById('productoNombre').value = '';
+            document.getElementById('productoCantidad').value = '1';
+            document.getElementById('productoPrecio').value = '';
+            document.getElementById('productoProveedor').value = 'CD';
+            document.getElementById('formaPago').value = 'efectivo';
+            document.getElementById('devirOpcion').style.display = 'none';
+            document.getElementById('productoNombre').focus();
+        }
+
+        // Enter key to add product
+        document.getElementById('productoPrecio').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                agregarProducto();
+            }
+        });
+    </script>
+</body>
+</html>
